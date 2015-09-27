@@ -1,0 +1,30 @@
+package knwcode;
+import rxtxrobot.*;
+
+/**
+ *
+ * @author atrain
+ */
+public class KNWCODE {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+        RXTXRobot robot = new ArduinoNano();
+      //  robot.setPort("/dev/tty.usbserial+AD01VAW");
+        //robot.setVerbose(true);
+        robot.connect();
+        //robot.attachServo(RXTXRobot.SERVO1, 9);
+        //robot.moveServo(RXTXRobot.SERVO1, 30);
+        robot.close();
+     
+	//robot.setPort("/dev/tty.usbserial+AD01VAW"); // Set port to COM3 
+	//robot.connect(); 
+	//robot.runMotor(RXTXRobot.MOTOR1, 125, 500); // Run motor 1 forward (speed of 125) for 5 seconds 
+	// Program stops until the command above is completed (5 seconds) 
+	//robot.runMotor(RXTXRobot.MOTOR1, -125, 300); // Run motor 1 backward (speed of 125) for 3 seconds 
+	//robot.close(); 
+    } 
+}
