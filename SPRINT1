@@ -27,4 +27,34 @@ public class KNWCODE {
 	//robot.runMotor(RXTXRobot.MOTOR1, -125, 300); // Run motor 1 backward (speed of 125) for 3 seconds 
 	//robot.close(); 
     } 
+      public static void threeMeter()
+    {	
+		r.runMotor(RXTXRobot.MOTOR1, 500, 3350);
+    }
+    public static void moveServo(int angle)
+    {
+		r.moveServo(RXTXRobot.SERVO1, 0); // Move Servo 1 to home
+		r.sleep(3000);
+		r.moveServo(RXTXRobot.SERVO1, angle);
+		r.sleep(3000);
+		r.moveServo(RXTXRobot.SERVO1, 0);
+    }
+    public static void bumpSensor()
+    {
+		r.refreshDigitalPins();
+		for (int i = 0; i < 50; i++)
+			System.out.println("BUMP: " + r.getDigitalPin(12).getValue());
+    }
+    public static void runUntilBump()
+    {
+        r.runMotor(RXTXRobot.MOTOR1, 500, 0);
+    }
+    public static void getDistance()
+    {
+      for (int x=0; x < 100; ++x) 
+                {
+			System.out.println("Response: " + r.getPing(13) + " cm"); 
+			r.sleep(300); 
+		} 
+    }
 }
