@@ -1,0 +1,109 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ardiunotest1;
+import rxtxrobot.*;
+/**
+ *
+ * @author oscar
+ */
+public class ArdiunoTest1 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static RXTXRobot r;
+    public static void main(String[] args) {
+        // TODO code application logic here
+        r = new ArduinoNano();
+        
+        
+        
+        r.setPort("/dev/tty.wch ch341 USB=>RS232 fa140");
+        
+        
+        
+        r.connect();
+        r.attachServo(RXTXRobot.SERVO1, 7);
+        /*r.attachGPS();
+
+      double[] coordinates = r.getGPSCoordinates();
+
+
+    System.out.println("Degrees latitude: " + coordinates[0]);
+    System.out.println("Minutes latitude: " + coordinates[1]);
+    System.out.println("Degrees longitude: " + coordinates[2]);
+    System.out.println("Minutes longitude: " + coordinates[3]);*/
+        //runUntilBump();
+        //threeMeter();
+        //getDistance();
+        movesServo(0);
+       // int thermistorReading = getThermistorReading(r);
+        //double temp = ((thermistorReading - 904.4)/(-8.95));
+        //System.out.println("The probe read the value: " + thermistorReading);
+        //System.out.println("In volts: " + (thermistorReading * (5.0/1023.0)));
+        //System.out.println("The temperature is: " + temp); 
+        r.close();
+    }
+      public static int getThermistorReading(RXTXRobot r) {
+        
+        int sum = 0;
+        int readingCount = 10;
+
+         //Read the analog pin values ten times, adding to sum each time
+         for (int i = 0; i < readingCount; i++) {
+
+         //Refresh the analog pins so we get new readings
+         r.refreshAnalogPins();
+         int reading = r.getAnalogPin(2).getValue();
+         sum += reading;
+        }
+
+        //Return the average reading
+        return sum / readingCount;
+    }
+      public static void threeMeter()
+    {	
+		r.runMotor(RXTXRobot.MOTOR1, 500, RXTXRobot.MOTOR2, -500, 6500);
+    }
+    public static void movesServo(int angle)
+    {
+		//r.moveServo(RXTXRobot.SERVO1, 0); // Move Servo 1 to home
+		//r.sleep(3000);
+		r.moveServo(RXTXRobot.SERVO1, angle);
+		r.sleep(1500);
+		//r.moveServo(RXTXRobot.SERVO1, 90);
+               // r.sleep(1500);
+    }
+    public static void bumpSensor()
+    {
+		
+		for (int i = 0; i < 50; i++)
+                {
+                    r.refreshAnalogPins();
+                    System.out.println("BUMP: " + r.getAnalogPin(1).getValue());
+                        
+                }
+    }
+    public static void runUntilBump()
+    {
+        int bump = 1;
+        r.runMotor(RXTXRobot.MOTOR1, 500, RXTXRobot.MOTOR2, -500, 0);
+        while(bump!=0)
+        {
+             r.refreshAnalogPins();
+             bump = r.getAnalogPin(1).getValue();
+        }
+        //r.moveServo(RXTXRobot.SERVO1, 180);
+        r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
+    }
+    public static void getDistance()
+    {
+      r.refreshDigitalPins();
+      System.out.println("Distance: " + r.getPing(13) + "cm");
+    }
+    
+  
+}
