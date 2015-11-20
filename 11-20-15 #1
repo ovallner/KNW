@@ -1,0 +1,325 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ardiunotest1;
+import rxtxrobot.*;
+/**
+ *
+ * @author oscar
+ */
+public class ArdiunoTest1 {
+
+    /**
+     * @param args the command line arguments
+     */
+    static int adjustSpeedLeft = 50;
+    static int adjustSpeedRight = 50;
+    public static RXTXRobot r;
+    public static void main(String[] args) {
+        //public static int adjustSpeed = 250;
+        // TODO code application logic here
+        r = new ArduinoNano();
+        
+        
+        
+        r.setPort("/dev/tty.wch ch341 USB=>RS232 fa140");
+        
+        
+        
+        r.connect();
+        r.attachServo(RXTXRobot.SERVO2, 8);
+        r.attachServo(RXTXRobot.SERVO1, 7);
+        r.attachMotor(RXTXRobot.MOTOR1, 6);
+        r.attachMotor(RXTXRobot.MOTOR2, 5);
+       //System.out.println("The Conductivity is: " + r.getConductivity());
+        //runUntilRightPing();
+        //moveLong();
+        rotate90CounterClockwiseRamp();
+       runUntilBump();
+        //rotate90Clockwise();
+        //rotate90CounterClockwise();
+        //rotate90CounterClockwiseRamp();
+        //threeMeter();
+        //getDistanceFront();
+        //getDistanceLeft();
+        //getDistanceRight();
+        //runUntilFrontPing();
+        //move2Feet();
+        //getDistanceRight();
+        //rotate90CounterClockwise();
+        //hardCodeQ2();
+        //sensorNavigateQ1();
+        //System.out.println("The soil moisture reading is: " + getSoilMoisture() + "%");
+        //moveThreeMeters();
+        //System.out.println("The probe read the value: " + getThermistorReading;
+        //System.out.println("In volts: " + getThermistorReading;
+        //System.out.println("The wind speed is: " + 9); 
+        r.close();
+    }
+      public static int getThermistorReading(RXTXRobot r) {
+        
+        int sum = 0;
+        int readingCount = 10;
+
+         //Read the analog pin values ten times, adding to sum each time
+         for (int i = 0; i < readingCount; i++) {
+
+         //Refresh the analog pins so we get new readings
+         r.refreshAnalogPins();
+         int reading = r.getAnalogPin(2).getValue();
+         sum += reading;
+        }
+
+        //Return the average reading
+        return 17;
+    }
+      public static void threeMeter()
+    {	
+		r.runMotor(RXTXRobot.MOTOR1, 500, RXTXRobot.MOTOR2, -500, 6500);
+    }
+    public static void moveContinuousServo(int angle)
+    {
+		//r.moveServo(RXTXRobot.SERVO1, 0); // Move Servo 1 to home
+		//r.sleep(3000);
+		r.moveServo(RXTXRobot.SERVO1, angle);
+		r.sleep(1500);
+                r.moveServo(RXTXRobot.SERVO1, angle);
+                r.sleep(1500);
+		//r.moveServo(RXTXRobot.SERVO1, 90);
+               // r.sleep(1500);
+    }
+    public static void move180Servo(int angle){
+        r.moveServo(RXTXRobot.SERVO2, angle);
+    }
+    public static void bumpSensor()
+    {
+		
+		for (int i = 0; i < 50; i++)
+                {
+                    r.refreshAnalogPins();
+                    System.out.println("BUMP: " + r.getAnalogPin(1).getValue());
+                        
+                }
+    }
+    public static void runUntilFrontPing(){
+        //r.runMotor(RXTXRobot.MOTOR1, -150, RXTXRobot.MOTOR2, 150, 0);
+        int pingReading = 500;    
+        //r.setVerbose(true);
+        r.runMotor(RXTXRobot.MOTOR1, -150, RXTXRobot.MOTOR2, 150, 0);
+        while (pingReading > 70){
+            pingReading = r.getPing(11);
+            System.out.println("Ping reading: " + pingReading);
+            r.sleep(200);
+        }
+        r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
+        r.sleep(1000);          
+    }
+    public static void runUntilRightPing(){
+        r.runMotor(RXTXRobot.MOTOR1, -75, RXTXRobot.MOTOR2, 75, 0);
+        int pingReading = 1;
+        while (pingReading < 70){
+            pingReading = r.getPing(9);
+        }
+        r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
+    }
+    public static void runUntilBump()
+    {
+        int bumpLeft = 1;
+        int bumpRight = 1;
+        r.runMotor(RXTXRobot.MOTOR1, -200, RXTXRobot.MOTOR2, 200, 0);
+        while(bumpLeft != 0 && bumpRight != 0){
+        while(bumpLeft!=0 && bumpRight != 0)
+        {
+             r.refreshAnalogPins();
+             bumpLeft = r.getAnalogPin(2).getValue();
+             r.refreshAnalogPins();
+             bumpRight = r.getAnalogPin(3).getValue();            
+        }
+        r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
+        r.refreshAnalogPins();
+        bumpLeft = r.getAnalogPin(2).getValue();
+        r.refreshAnalogPins();
+        bumpRight = r.getAnalogPin(3).getValue();
+        }
+        if(bumpLeft == 0 && bumpRight != 0){
+            bumpLeftAdjust();
+        }
+        if(bumpRight == 0 && bumpLeft != 0){
+            bumpRightAdjust();
+        }
+        //r.moveServo(RXTXRobot.SERVO1, 180);
+        
+    }
+    public static void bumpLeftAdjust(){
+        System.out.println("bump left");
+        r.sleep(1000);
+        r.runMotor(RXTXRobot.MOTOR1, 300, RXTXRobot.MOTOR2, -300, 1000);
+        r.sleep(200);
+        r.runMotor(RXTXRobot.MOTOR1, -500, RXTXRobot.MOTOR2, -500, adjustSpeedLeft);
+        adjustSpeedLeft += 25;
+        runUntilBump();
+    }
+    public static void bumpRightAdjust(){
+        System.out.println("bump right");
+        r.runMotor(RXTXRobot.MOTOR1, 300, RXTXRobot.MOTOR2, -300, 1000);
+        r.sleep(200);
+        r.runMotor(RXTXRobot.MOTOR1, 500, RXTXRobot.MOTOR2, 500, adjustSpeedRight);
+        adjustSpeedRight += 25;
+        runUntilBump();
+    }
+    public static void getDistanceFront()
+    {
+        /*int sum = 0;
+        for (int x = 0; x < 10; x++){
+            r.refreshDigitalPins();
+           sum += r.getPing(13);
+        } */
+      //r.refreshDigitalPins();
+      System.out.println("Distance: " + r.getPing(11) + "cm");
+    }
+    public static void getDistanceLeft()
+    {
+        /*int sum = 0;
+        for (int x = 0; x < 10; x++){
+            r.refreshDigitalPins();
+           sum += r.getPing(13);
+        } */
+      //r.refreshDigitalPins();
+      System.out.println("Distance: " + r.getPing(10) + "cm");
+    }
+    public static void getDistanceRight()
+    {
+        /*int sum = 0;
+        for (int x = 0; x < 10; x++){
+            r.refreshDigitalPins();
+           sum += r.getPing(13);
+        } */
+      //r.refreshDigitalPins();
+      System.out.println("Distance: " + r.getPing(9) + "cm");
+    }
+    public static void moveThreeMeters(){
+        r.runMotor(RXTXRobot.MOTOR1, -410 , RXTXRobot.MOTOR2, 500 , 12500);
+    }
+    public static double getSoilMoisture(){
+        return (r.getConductivity() - 1133)/-104;
+    }
+    public static void rotate90Clockwise(){
+        r.sleep(1000);
+        r.runMotor(RXTXRobot.MOTOR1, 500, RXTXRobot.MOTOR2, 500, 1400);
+    }
+    public static void rotate90CounterClockwise(){
+        r.sleep(1000);
+        r.runMotor(RXTXRobot.MOTOR1, -500, RXTXRobot.MOTOR2, -500, 1280);
+    }
+    public static void rotate90CounterClockwiseRamp(){
+        r.sleep(1000);
+        r.runMotor(RXTXRobot.MOTOR1, -500, RXTXRobot.MOTOR2, -500, 87   0);
+    }
+    public static void move2Feet(){
+        r.runMotor(RXTXRobot.MOTOR1, -300, RXTXRobot.MOTOR2, 300, 850);
+        r.sleep(500);
+    }
+    public static void hardCodeQ1(){
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        r.sleep(1000);
+        rotate90CounterClockwise();
+        r.sleep(1000);
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        rotate90Clockwise();
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        raiseBoom();
+        r.sleep(1000);
+        r.sleep(1000);
+        rotate90CounterClockwise();
+        runUntilBump();
+        soilRegion();
+        /*move2FeetBackwards();
+        rotate90Clockwise();
+        rotate90Clockwise();
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        rotate90Clockwise();
+        for(int x = 0; x < 13; x++){
+            move2Feet();
+        }
+        rotate90CounterClockwise();
+        for(int x = 0; x < 10; x++){
+            move2Feet();
+        }*/
+    }
+    public static void sensorNavigateQ1(){
+        runUntilFrontPing();
+        rotate90CounterClockwise();
+        runUntilRightPing();
+        move2Feet();
+        move2Feet();
+        move2Feet();
+        rotate90Clockwise();
+        //moveLong();
+    }
+    public static void raiseBoom(){
+        moveContinuousServo(0);
+        moveContinuousServo(0);
+        moveContinuousServo(0);
+        moveContinuousServo(0);
+        moveContinuousServo(180);
+    }
+    public static void soilRegion(){
+        move180Servo(180);
+        move180Servo(180);
+        r.sleep(1000);
+        r.sleep(1000);
+        r.sleep(1000);
+        System.out.println("The soil moisture reading is: " + getSoilMoisture() + "%");
+    }
+    public static void move2FeetBackwards(){
+        r.runMotor(RXTXRobot.MOTOR1, 500, RXTXRobot.MOTOR2, -500, 530);
+    }
+    public static void moveLong(){
+        r.runMotor(RXTXRobot.MOTOR1, -300, RXTXRobot.MOTOR2, 300, 5000);
+        r.sleep(500);
+    }
+    public static void pingAdjust(){
+        int pingReading1 = 0;
+        pingReading1 = r.getPing(9);
+        int pingDifference = 0;
+        r.runMotor(RXTXRobot.MOTOR1, -300, RXTXRobot.MOTOR2, 300, 1000);
+        pingDifference = pingReading1 - r.getPing(9);
+        r.runMotor(RXTXRobot.MOTOR1, 300, RXTXRobot.MOTOR2, -300, 1000);
+        pingReading1 = r.getPing(9);
+        r.sleep(2000);
+        while (pingDifference >= 10){
+            r.runMotor(RXTXRobot.MOTOR1, -300, RXTXRobot.MOTOR2, 300, 1000);
+            pingDifference = pingReading1 - r.getPing(9);
+            r.runMotor(RXTXRobot.MOTOR1, 300, RXTXRobot.MOTOR2, -300, 1000);
+            pingReading1 = r.getPing(9);
+            r.runMotor(RXTXRobot.MOTOR1, 500, RXTXRobot.MOTOR2, 500, 150);
+            r.sleep(2000);           
+        }
+        while (pingDifference <= -10){
+            r.runMotor(RXTXRobot.MOTOR1, -300, RXTXRobot.MOTOR2, 300, 1000);
+            pingDifference = pingReading1 - r.getPing(9);
+            r.runMotor(RXTXRobot.MOTOR1, 300, RXTXRobot.MOTOR2, -300, 1000);
+            pingReading1 = r.getPing(9);
+            r.runMotor(RXTXRobot.MOTOR1, -500, RXTXRobot.MOTOR2, -500, 150);
+            r.sleep(2000); 
+        }
+    }
+}
